@@ -3,6 +3,7 @@ package com.example.controller;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -63,26 +64,26 @@ public class BookControllerTest {
 		Mockito.when(bookRepo.save(Matchers.any(Book.class))).thenReturn(book);
 		String json = new ObjectMapper().writeValueAsString(book);
 		mockMvc.perform(post("/createBook").content(json).contentType(MediaType.APPLICATION_JSON_VALUE))
-				.andExpect(status().is(201));
+				.andExpect(status().is(200));
 	}
 	
 	
 	@Test
-	public void testCreateBookWithAlreadyData() throws Exception {
+	public void testUpdateBook() throws Exception {
 		Book book = new Book();
 		book.setId("2");
 		Mockito.when(bookRepo.findOne(Matchers.anyString())).thenReturn(book);
 		Mockito.when(bookRepo.save(Matchers.any(Book.class))).thenReturn(null);
 		String json = new ObjectMapper().writeValueAsString(book);
-		mockMvc.perform(post("/createBook").content(json).contentType(MediaType.APPLICATION_JSON_VALUE))
-				.andExpect(status().is(201));
+		mockMvc.perform(put("/updateBook").content(json).contentType(MediaType.APPLICATION_JSON_VALUE))
+				.andExpect(status().is(200));
 	}
 
 	@Test
 	public void testdeleteBook() throws Exception{
 		mockMvc.perform(delete("/delete/10").contentType(MediaType.APPLICATION_JSON_VALUE)).andExpect(status().is(404));
 		
-		
 	}
+	
 
 }

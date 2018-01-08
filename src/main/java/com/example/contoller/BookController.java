@@ -2,8 +2,7 @@ package com.example.contoller;
 
 import java.io.IOException;
 import java.util.Collection;
-
-
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -26,38 +25,48 @@ public class BookController {
 	
 	@Autowired
 	private BookRepository bookRepository;
-	
+	//ResponseEntity<Collection<Book>>
 	@RequestMapping(method = RequestMethod.GET, value="/getBooks" )
-	public ResponseEntity<Collection<Book>> getAllBooks() {
-		return new ResponseEntity<Collection<Book>>(bookRepository.findAll(), HttpStatus.OK);
+	public List<Book> getAllBooks() {
+		List <Book> book=bookRepository.findAll();
+		return book;
+		//return new ResponseEntity<Collection<Book>>(bookRepository.findAll(), HttpStatus.OK);
 		
 	}
 	
 	//Creating book using POST
-	
+	//ResponseEntity<Void>
 	@RequestMapping(value="/createBook",method=RequestMethod.POST,consumes="application/json")
-	public ResponseEntity<Void> createBook (@RequestBody Book bookMap,UriComponentsBuilder uri) throws JsonMappingException, JsonParseException, IOException{
+	public String createBook (@RequestBody Book bookMap,UriComponentsBuilder uri) throws JsonMappingException, JsonParseException, IOException{
 		bookRepository.save(bookMap);
 		HttpHeaders header = new HttpHeaders();
-		return new ResponseEntity<Void>(header,HttpStatus.CREATED);
+		//return new ResponseEntity<Void>(header,HttpStatus.CREATED);
+		return "record created successfully";
 	}
 	
 	
-	
+	//ResponseEntity<Book>
 	@RequestMapping(method = RequestMethod.GET, value="/getBook/{id}" )
-	public ResponseEntity<Book> getBookDetails(@PathVariable("id") String id) {
+	public  Book getBookDetails(@PathVariable("id") String id) {
 		Book book = bookRepository.findOne(id);
-		
-		return new ResponseEntity<Book>(book,HttpStatus.OK);
-		
+		return book;
+		//return new ResponseEntity<Book>(book,HttpStatus.OK);
 	}
-	
+	//ResponseEntity<Void>
 	@RequestMapping(method = RequestMethod.DELETE, value = "/deleteBook/{id}")
-	public ResponseEntity<Void> deleteBookDetails(@PathVariable("id") String id){
+	public  String deleteBookDetails(@PathVariable("id") String id){
 		bookRepository.delete(id);
 		HttpHeaders header = new HttpHeaders();
-		return new ResponseEntity<Void>(header, HttpStatus.OK);		
+		//return new ResponseEntity<Void>(header, HttpStatus.OK);		
+		return "record deleted success";
 	}
-
+	@RequestMapping(value="/updateBook",method=RequestMethod.PUT)
+	public String updateBook ( @RequestBody Book book){
+		Book bookId=bookRepository.findOne(book.getId());
+		if (bookId !=null) {
+			bookRepository.save(book);
+		}
+	return "successfully updated..";
+	}
 
 }
